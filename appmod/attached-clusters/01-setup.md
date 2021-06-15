@@ -2,9 +2,6 @@
 
 <walkthrough-watcher-constant key="region" value="asia-northeast1"></walkthrough-watcher-constant>
 <walkthrough-watcher-constant key="zone" value="asia-northeast1-c"></walkthrough-watcher-constant>
-<walkthrough-watcher-constant key="vpc" value="anthos-ac"></walkthrough-watcher-constant>
-<walkthrough-watcher-constant key="subnet" value="anthos-ac"></walkthrough-watcher-constant>
-<walkthrough-watcher-constant key="subnet-range" value="10.128.0.0/16"></walkthrough-watcher-constant>
 <walkthrough-watcher-constant key="sa" value="sa-anthos-ac"></walkthrough-watcher-constant>
 <walkthrough-watcher-constant key="cluster" value="anthos"></walkthrough-watcher-constant>
 
@@ -132,24 +129,25 @@ gcloud iam service-accounts keys create "${GOOGLE_APPLICATION_CREDENTIALS}" --ia
 
 自分のログイン名を変数化しておき、
 
-```bash
+```text
 account=$(gcloud config get-value core/account)
+account="${account%%@*}"
 ```
 
 それを使いつつ GKE クラスタを 1 つ作ります。
 
-```text
+```bash
 gcloud container clusters create \
-    "{{cluster}}-gke-${account%%@*}" \
+    "{{cluster}}-gke-${account}" \
     --machine-type "e2-medium" \
     --num-nodes 2 --async
 ```
 
 kind を内部で起動するための VM を起動し
 
-```text
+```bash
 gcloud compute instances create \
-    "{{cluster}}-gce-${account%%@*}" \
+    "{{cluster}}-gce-${account}" \
     --zone {{zone}} --machine-type "n2-standard-2" \
     --metadata=enable-oslogin=TRUE \
     --scopes cloud-platform
@@ -157,10 +155,10 @@ gcloud compute instances create \
 
 [Identity-Aware Proxy](https://cloud.google.com/iap?hl=ja) からの SSH を許可しつつ、秘密鍵を転送し、中に入ります。
 
-```text
+```bash
 gcloud compute firewall-rules create allow-from-iap --network=default --direction=INGRESS --priority=1000 --action=ALLOW --rules=tcp:22,icmp --source-ranges=35.235.240.0/20
-gcloud compute scp {{sa}}-creds.json "{{cluster}}-gce-${account%%@*}":~ --tunnel-through-iap
-gcloud compute ssh "{{cluster}}-gce-${account%%@*}" --tunnel-through-iap
+gcloud compute scp {{sa}}-creds.json "{{cluster}}-gce-${account}":~ --tunnel-through-iap
+gcloud compute ssh "{{cluster}}-gce-${account}" --tunnel-through-iap
 ```
 
 Kind をインストールし、Kubernetes クラスタを起動します。
@@ -197,10 +195,10 @@ exit
 
 Cloud Shell にもどり、GKE クラスタも Anthos に登録します。GKE の場合は `--gke-cluster` オプションでクラスタを指定します。
 
-```text
+```bash
 gcloud container hub memberships \
-    register "{{cluster}}-gke-${account%%@*}" \
-    --gke-cluster "{{zone}}/{{cluster}}-gke-${account%%@*}" \
+    register "{{cluster}}-gke-${account}" \
+    --gke-cluster "{{zone}}/{{cluster}}-gke-${account}" \
     --service-account-key-file="${GOOGLE_APPLICATION_CREDENTIALS}"
 ```
 
@@ -218,7 +216,11 @@ gcloud container hub memberships \
 
 ```text
 account=$(gcloud config get-value core/account)
-gcloud compute ssh "{{cluster}}-gce-${account%%@*}" --tunnel-through-iap
+account="${account%%@*}"
+```
+
+```bash
+gcloud compute ssh "{{cluster}}-gce-${account}" --tunnel-through-iap
 ```
 
 ### **Kubernetes クラスタロールの作成**
