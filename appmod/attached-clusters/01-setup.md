@@ -143,7 +143,7 @@ gcloud container clusters create \
     --num-nodes 2 --async
 ```
 
-kind を内部で起動するための VM を起動し
+もう一つ Kubernetes クラスタを起動します。まず kind を内部で起動するための VM を起動し
 
 ```bash
 gcloud compute instances create \
@@ -193,13 +193,13 @@ sudo gcloud container hub memberships \
 exit
 ```
 
-Cloud Shell にもどり、GKE クラスタも Anthos に登録します。GKE の場合は `--gke-cluster` オプションでクラスタを指定します。
+GKE クラスタも Anthos に登録します。GKE の場合は `--gke-cluster` オプションでクラスタを指定します。
 
 ```bash
 gcloud container hub memberships \
     register "{{cluster}}-gke-${account}" \
     --gke-cluster "{{zone}}/{{cluster}}-gke-${account}" \
-    --service-account-key-file="${GOOGLE_APPLICATION_CREDENTIALS}"
+    --service-account-key-file={{sa}}-creds.json
 ```
 
 ## Google Cloud コンソールへの権限付与

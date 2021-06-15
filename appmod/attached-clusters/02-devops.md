@@ -61,6 +61,7 @@ Go 言語で作成されたサンプル Web アプリケーションをコンテ
 ここで作成したコンテナはローカルディスクに保存されます。
 
 ```bash
+cd appmod/attached-clusters/
 docker build -t asia-northeast1-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/gcp-getting-started-lab-jp/devops-handson:v1 .
 ```
 
@@ -138,5 +139,5 @@ gcloud container hub memberships get-credentials "{{cluster}}-gke-${account}"
 次のステップにお進みください。
 
 ```bash
-teachme appmod/attached-clusters/09-teardown.md
+teachme 09-teardown.md
 ```
