@@ -12,7 +12,7 @@
 
 2 つの Kubernetes クラスタを Anthos Attached Clusters として一括管理する手順です。
 
-**所要時間**: 約 45 分
+**所要時間**: 約 30 分
 
 **前提条件**:
 
@@ -301,3 +301,11 @@ Anthos として登録されたクラスタから何が見えるかを確認し�
 <walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
 すべて完了しました。
+
+次のステップにお進みください。
+
+**（Kind ノード上ではなく、Cloud Shell にもどり、以下を実行してください）**
+
+```bash
+teachme appmod/attached-clusters/02-devops.md
+```
